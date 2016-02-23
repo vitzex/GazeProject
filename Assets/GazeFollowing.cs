@@ -18,10 +18,10 @@ public class GazeFollowing : MonoBehaviour {
 
         Gaze = GameObject.FindGameObjectWithTag("Gaze");
 
-      //  Gaze.transform.rotation = Random.rotation;
+        //  Gaze.transform.rotation = Random.rotation;
 
-        if ( Vector3.Distance(Agent.transform.position, Gaze.transform.position) <= 7)
-         {
+        if (Vector3.Distance(Agent.transform.position, Gaze.transform.position) <= 7)
+        {
             angle = Vector3.Angle(Gaze.transform.position - Agent.transform.position, Agent.transform.forward);
 
             //Clone = Instantiate(gameObject, gameObject.transform.position, Quaternion.Euler(0, angle, 0) );
@@ -30,13 +30,11 @@ public class GazeFollowing : MonoBehaviour {
             //gameObject.transform.localScale = Gaze.transform.position;
             // Clone.transform.position = gameObject.transform.position;
             //   Clone.transform.forward = Gaze.transform.position - Clone.transform.position;
-            //localrotation - relativ4e to the parent's rotation
+            //localrotation - relativ4e to the parent's rotation  
             gameObject.transform.forward = Gaze.transform.position - gameObject.transform.position;
-
-
-
-           //  Debug.DrawLine(Agent.transform.position, Gaze.transform.position, Color.red,1000, true); 
+            //  Debug.DrawLine(Agent.transform.position, Gaze.transform.position, Color.red,1000, true); 
         }
+        else gameObject.transform.forward = gameObject.transform.parent.transform.forward; //chest forward
 
 	}
 }
