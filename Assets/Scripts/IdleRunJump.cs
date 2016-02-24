@@ -15,10 +15,18 @@ public class IdleRunJump : MonoBehaviour {
 		
 		if(animator.layerCount >= 2)
 			animator.SetLayerWeight(1, 1);
-	}
-		
-	// Update is called once per frame
-	void Update () 
+
+        GameObject Gaze = GameObject.FindGameObjectWithTag("Gaze");
+
+        // Quaternion rot = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
+         Gaze.transform.parent.transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
+        //can rotate -80 to 80 sideways (y rotation
+        // can rotate 0 to 80 up-down (x, z rotation) so that others can stare up too (not be blocked)
+        //only works when joint_head copied outside of neck -> parent now torso
+    }
+
+    // Update is called once per frame
+    void Update () 
 	{
 
 		if (animator)
