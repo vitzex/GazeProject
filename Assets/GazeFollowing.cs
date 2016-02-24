@@ -5,12 +5,18 @@ public class GazeFollowing : MonoBehaviour {
 
     public bool overwrite;
     GameObject Gaze, Agent, Clone, threshold;
-    float angle, transferThreshold;
+    float angle, transferThreshold, stepRadians;
 
 	// Use this for initialization
 	void Start () {
 
         Agent = gameObject; //the object being called
+
+        stepRadians = 5* Mathf.PI / 180;
+
+     //   defaultSpd=500;
+     //   maxSpeed = defaultSpd;
+     //    maxSpeed = Mathf.Pow(0.02f,2)*Time.deltaTime;
 
         Gaze = GameObject.FindGameObjectWithTag("Gaze");
         Gaze.transform.parent.transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
@@ -37,15 +43,34 @@ public class GazeFollowing : MonoBehaviour {
 
         if (Vector3.Distance(Agent.transform.position, Gaze.transform.parent.transform.position) <= transferThreshold)
         {
-            //    angle = Vector3.Angle(Gaze.transform.position - Agent.transform.position, Agent.transform.forward);
+            Vector3 desired = Gaze.transform.position - Agent.transform.position;
+ 
+       //  if (maxSpeed>0)
+            if (gameObject.transform.forward.normalized != desired.normalized)
+             {
+                    gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward,Gaze.transform.position - Agent.transform.position,stepRadians,0);
+             }
+             
+            //  angle = Vector3.Angle(Gaze.transform.position - Agent.transform.position, Agent.transform.forward);
+            //  float desired = angle * maxSpeed;
+            // gameObject.transform.Rotate( (Gaze.transform.position - Agent.transform.forward) );
+            //Vector3 desired = gameObject.transform.forward + (Gaze.transform.position - gameObject.transform.forward) / maxSpeed;
 
-            //   Vector3 dist = Gaze.transform.position - Gaze.transform.position - gameObject.transform.position;
-            //     Vector3 desired = dist.normalized * maxSpeed;
-            //     gameObject.transform.forward = desired; // - gameObject.transform.forward; //forward is basically our velocity
+
+            //gameObject.transform.forward = desired.normalized;
+
+           // Vector3 desired = ( Gaze.transform.position + gameObject.transform.forward - 2 * gameObject.transform.position) / 2;
+           //gameObject.transform.forward = desired;
+            //  maxSpeed = maxSpeed - 1;
+            //  Vector3 dist = Gaze.transform.position - gameObject.transform.position;
+            //    Vector3 desired = dist.normalized * maxSpeed;
+            //gameObject.transform.forward = desired; // - gameObject.transform.forward; //forward is basically our velocity
+
+            //gameObject.transform.forward = Gaze.transform.position - gameObject.transform.position;
+
 
             /////STUFF BEFORE
 
-            gameObject.transform.forward = Gaze.transform.position - gameObject.transform.position;
 
             //Clone = Instantiate(gameObject, gameObject.transform.position, Quaternion.Euler(0, angle, 0) );
             // GameObject.Find(name).transform.rotation = Quaternion.Euler(Gaze.transform.position);
@@ -57,7 +82,9 @@ public class GazeFollowing : MonoBehaviour {
 
             //  Debug.DrawLine(Agent.transform.position, Gaze.transform.position, Color.red,1000, true); 
         }
-        else gameObject.transform.forward = gameObject.transform.parent.transform.forward; //chest forward
-
+        else { gameObject.transform.forward = gameObject.transform.parent.transform.forward; //chest forward
+            gameObject.transform.forward = gameObject.transform.forward.normalized;
+            //maxSpeed = defaultSpd;
+        }
 	}
 }
