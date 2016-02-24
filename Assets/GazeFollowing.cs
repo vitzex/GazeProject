@@ -82,8 +82,9 @@ public class GazeFollowing : MonoBehaviour {
 
             //  Debug.DrawLine(Agent.transform.position, Gaze.transform.position, Color.red,1000, true); 
         }
-        else { gameObject.transform.forward = gameObject.transform.parent.transform.forward; //chest forward
-            gameObject.transform.forward = gameObject.transform.forward.normalized;
+        else { //gameObject.transform.forward = gameObject.transform.parent.transform.forward; //chest forward
+          //  gameObject.transform.forward = gameObject.transform.forward.normalized;
+            gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, gameObject.transform.parent.transform.forward, stepRadians, 0);
             //maxSpeed = defaultSpd;
         }
 	}
