@@ -38,8 +38,11 @@ public class RandomCharacters : MonoBehaviour {
 			if(Vector3.Distance(TargetPosition,avatar.rootPosition) > 5)
 			{
 				avatar.SetFloat("Speed",0.3f,3.5f*SpeedDampTime, Time.deltaTime);
-				
-				Vector3 curentDir = avatar.rootRotation * Vector3.forward;
+
+                avatar.speed = 0.5f;
+                //speed fix
+
+                Vector3 curentDir = avatar.rootRotation * Vector3.forward;
 				Vector3 wantedDir = (TargetPosition - avatar.rootPosition).normalized;
 	
 				if(Vector3.Dot(curentDir,wantedDir) > 0)
@@ -53,7 +56,7 @@ public class RandomCharacters : MonoBehaviour {
 			}
 			else
 			{
-                avatar.SetFloat("Speed", 0, 0.5f*SpeedDampTime, Time.deltaTime);
+                avatar.SetFloat("Speed", 0, SpeedDampTime, Time.deltaTime);
 				
 				if(avatar.GetFloat("Speed") < 0.01f)
 				{
