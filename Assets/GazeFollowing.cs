@@ -29,7 +29,8 @@ public class GazeFollowing : MonoBehaviour {
     {
         _prevState = _state;
         _state = newState;
-        Debug.Log(_state);
+     //   Debug.Log(_state); 
+     // working correctly atm so commented out
     }
 
 
@@ -138,25 +139,39 @@ public class GazeFollowing : MonoBehaviour {
     {
         Vector3 desired = Gaze.transform.position - Agent.transform.position;
 
-        if (Vector3.Angle(Agent.transform.forward, desired) < 80) // check if within visual field)
-        {
-            if (Vector3.Angle(Agent.transform.parent.transform.forward, desired) <= 135)
+      //  if (Vector3.Angle(Agent.transform.forward, desired) < 80) // check if within visual field)
+     //   {
+       //     if (Vector3.Angle(Agent.transform.parent.transform.forward, desired) <= 135)
                 //(physically harder to look back over 135 degrees
                Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, desired, stepRadians, 0);
             //rotate towards target
             //steering behaviour -> normalized by stepRadians
 
-            else Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);
+        //    else Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);
             //if not within physically comfortable angle, rotate back towards run direction
-        }
+      //  }
 
     }
 
     bool maintainFollow(GameObject Agent)
     {
-        if (maintain == -7) {  maintain = 5 / Time.deltaTime; return true; } //we want follow to be maintained for 5 seconds 
-        else if (maintain>0) {  maintain--; return true; } //counting down
-        else {  maintain = -7; return false; } //default unmaintain value
+        if (maintain == -7)
+           {  maintain = 5000;
+         //   Debug.Log(maintain);
+            return true;
+            } //we want follow to be maintained for 5 seconds 
+
+        else if (maintain>0)
+           {  maintain--;
+           // Debug.Log(maintain);
+            return true;
+            } //counting down
+
+        else
+           {  maintain = -7;
+         //   Debug.Log(maintain);
+            return false;
+            } //default unmaintain value
 
     }
 
