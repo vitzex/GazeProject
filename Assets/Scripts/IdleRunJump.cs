@@ -8,7 +8,7 @@ public class IdleRunJump : MonoBehaviour {
     public GameObject threshold, Gaze;
 	public float DirectionDampTime = .25f;
 	public bool ApplyGravity = true;
-    int transferThreshold = 7;
+    int transferThreshold = 7, gazeCounter=50;
 
    // public int gazersInSight(GameObject Agent)
    // {
@@ -43,6 +43,21 @@ public class IdleRunJump : MonoBehaviour {
     // Update is called once per frame
     void Update () 
 	{
+
+        if (gazeCounter == 0)
+        {
+            // GameObject.Find("rotateTowardsMe").transform.parent.transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
+            Gaze.transform.parent.transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
+            gazeCounter = 50;
+            //localRotation so it's fine to re-rotate as it will still land close to parent
+        }
+        else
+        {
+            gazeCounter--;
+           // Quaternion.RotateTowards(Gaze.transform.parent.transform.rotation, GameObject.Find("rotateTowardsMe").transform.rotation, 1);
+        }//updating gaze from time to time
+        Debug.Log(gazeCounter);
+
         threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0);
         //threshold area outlined - in case gaze.parent moves
 

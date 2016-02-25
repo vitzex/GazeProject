@@ -8,7 +8,7 @@ public class GazeFollowing : MonoBehaviour {
     float angle, transferThreshold, stepRadians = 0.1f * Mathf.PI / 180, randomVar = 10, maintain = -7;
     int visible = 0, prev_visible = 0;
 
-    public enum State { Stroll, Decide, Follow }
+    public enum State { Stroll, Decide, Follow, Invisible }
 
     State _state = State.Stroll;
     State _prevState;
@@ -65,7 +65,9 @@ public class GazeFollowing : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        StartCoroutine(States(gameObject)); //determine state of the agent and take appropriate actions
+        
+            StartCoroutine(States(gameObject)); //determine state of the agent and take appropriate actions
+
     }
 
     IEnumerator States (GameObject Agent)
@@ -76,14 +78,28 @@ public class GazeFollowing : MonoBehaviour {
         {
             switch (_state)
             {
+                case State.Invisible:
+                    //Agent.transform.forward = Agent.transform.parent.transform.forward; 
+                    //no need, no one can see :)
+
+                    if (Agent.transform.parent.transform.parent.transform.parent.GetComponentInChildren<Renderer>().isVisible) //only for visible agents
+                        SetState(State.Stroll);
+
+                    break;
                 case State.Stroll:
+                    if (!Agent.transform.parent.transform.parent.transform.parent.GetComponentInChildren<Renderer>().isVisible) //not visible agents
+                        SetState(State.Invisible);
+
                     lookFwd(Agent); //normal behaviour
 
                     if ( scanIncrease(Agent) ) SetState(State.Decide); //if more gazers around, redecide whether to follow gaze or not
-
+                    
                     break;
 
                 case State.Decide:
+
+                    if (!Agent.transform.parent.transform.parent.transform.parent.GetComponentInChildren<Renderer>().isVisible) //not visible agents
+                        SetState(State.Invisible);
 
                     lookFwd(Agent); //normal behaviour
 
@@ -93,6 +109,9 @@ public class GazeFollowing : MonoBehaviour {
                     break;
 
                 case State.Follow:
+
+                    if (!Agent.transform.parent.transform.parent.transform.parent.GetComponentInChildren<Renderer>().isVisible) //not visible agents
+                        SetState(State.Invisible);
 
                     gazeFollow(Agent); //gazing behaviour
 
