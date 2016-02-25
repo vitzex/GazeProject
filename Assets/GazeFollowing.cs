@@ -5,7 +5,7 @@ public class GazeFollowing : MonoBehaviour {
 
     public bool overwrite;
     GameObject Gaze, Agent, Clone, threshold, target;
-    float angle, transferThreshold, stepRadians, randomVar = 10, maintain = -7;
+    float angle, transferThreshold, stepRadians = 0.1f * Mathf.PI / 180, randomVar = 10, maintain = -7;
     int visible = 0, prev_visible = 0;
 
     public enum State { Stroll, Decide, Follow }
@@ -41,7 +41,7 @@ public class GazeFollowing : MonoBehaviour {
 
         Agent = gameObject; //the object being called
 
-        stepRadians = 7* Mathf.PI / 180;
+    //    stepRadians = 0.1f* Mathf.PI / 180; //defined upstairs
 
      //   defaultSpd=500;
      //   maxSpeed = defaultSpd;
@@ -49,23 +49,21 @@ public class GazeFollowing : MonoBehaviour {
 
         Gaze = GameObject.FindGameObjectWithTag("Gaze");
 
+        Gaze.transform.parent.tag = "Gazing";
+
         transferThreshold = 7;
 
-        threshold = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        threshold.GetComponent<Collider>().enabled = false;
-        threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0,Gaze.transform.parent.transform.position.y, 0);
-        threshold.transform.localScale = new Vector3(2*transferThreshold, 0.1f, 2*transferThreshold);
-
-        Gaze.transform.parent.tag = "Gazing";
+        //MOVED TO IDELRUNJUMP (so as not to be executed 50 times)
+    //    threshold = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+     //   threshold.GetComponent<Collider>().enabled = false;
+     //   threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0,Gaze.transform.parent.transform.position.y, 0);
+      //  threshold.transform.localScale = new Vector3(2*transferThreshold, 0.1f, 2*transferThreshold);
 
         //  Clone = (GameObject) Instantiate(gameObject, gameObject.transform.position, Quaternion.Euler(0, angle, 0));
     }
 	
 	// Update is called once per frame
 	void Update () {
-
-        threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0); 
-        //threshold area outlined - in case gaze.parent moves
 
         StartCoroutine(States(gameObject)); //determine state of the agent and take appropriate actions
     }
@@ -139,15 +137,15 @@ public class GazeFollowing : MonoBehaviour {
     {
         Vector3 desired = Gaze.transform.position - Agent.transform.position;
 
-      //  if (Vector3.Angle(Agent.transform.forward, desired) < 80) // check if within visual field)
+      //  if (Vector3.Angle(Agent.transform.forward, desired) < 80) // check if within visual field
+      //OBSOLETE - now visual field is being calculated via FSM
      //   {
-       //     if (Vector3.Angle(Agent.transform.parent.transform.forward, desired) <= 135)
-                //(physically harder to look back over 135 degrees
+            if (Vector3.Angle(Agent.transform.parent.transform.forward, desired) <= 135)
+                //physically harder to look back over 135 degrees - so if going over, look away
                Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, desired, stepRadians, 0);
             //rotate towards target
             //steering behaviour -> normalized by stepRadians
-
-        //    else Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);
+            else Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);
             //if not within physically comfortable angle, rotate back towards run direction
       //  }
 
