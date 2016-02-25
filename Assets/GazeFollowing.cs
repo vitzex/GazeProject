@@ -2,6 +2,12 @@
 using System.Collections;
 
 public class GazeFollowing : MonoBehaviour {
+
+    public bool overwrite;
+    GameObject Gaze, Agent, Clone, threshold, target;
+    float angle, transferThreshold, stepRadians, randomVar = 10, maintain = -7;
+    int visible = 0, prev_visible = 0;
+
     public enum State { Stroll, Decide, Follow }
 
     State _state = State.Stroll;
@@ -26,13 +32,11 @@ public class GazeFollowing : MonoBehaviour {
         Debug.Log(_state);
     }
 
-    public bool overwrite;
-    GameObject Gaze, Agent, Clone, threshold, target;
-    float angle, transferThreshold, stepRadians, randomVar = 10;
-    int visible = 0, prev_visible=0;
 
     // Use this for initialization
     void Start () {
+
+        SetState(State.Stroll);
 
         Agent = gameObject; //the object being called
 
@@ -44,16 +48,6 @@ public class GazeFollowing : MonoBehaviour {
 
         Gaze = GameObject.FindGameObjectWithTag("Gaze");
 
-      //  {
-          //  Quaternion rot = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
-          //  Gaze.transform.parent.transform.localRotation = rot;
-         //   Debug.Log("How many times?");
-    //    }
-    //triggered everytime a creature spawns => move to permanent script
-
-
-      
-
         transferThreshold = 7;
 
         threshold = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -61,126 +55,51 @@ public class GazeFollowing : MonoBehaviour {
         threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0,Gaze.transform.parent.transform.position.y, 0);
         threshold.transform.localScale = new Vector3(2*transferThreshold, 0.1f, 2*transferThreshold);
 
+        Gaze.transform.parent.tag = "Gazing";
+
         //  Clone = (GameObject) Instantiate(gameObject, gameObject.transform.position, Quaternion.Euler(0, angle, 0));
     }
 	
 	// Update is called once per frame
 	void Update () {
-        threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0); //in case gaze.parent moves
-        //  Gaze.transform.rotation = Random.rotation;
 
-        if (Vector3.Distance(Agent.transform.position, Gaze.transform.parent.transform.position) <= transferThreshold)
-        {
-            Vector3 desired = Gaze.transform.position - Agent.transform.position;
+        threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0); 
+        //threshold area outlined - in case gaze.parent moves
 
-          if (Vector3.Angle(gameObject.transform.forward, desired) <80) // check if within visual field)
-            {
-                if (Vector3.Angle(gameObject.transform.parent.transform.forward, desired) <= 135) 
-                    //(physically harder to look back over 135 degrees
-                    gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, desired, stepRadians, 0);
-                    //rotate towards target
-                    //steering behaviour -> normalized by stepRadians
-
-                else gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, gameObject.transform.parent.transform.forward, stepRadians, 0);
-                //if not within physically comfortable angle, rotate back towards run direction
-            }
-
-            // gameObject.transform.rotation = Quaternion.RotateTowards(gameObject.transform.rotation, Quaternion.LookRotation(Gaze.transform.position - Agent.transform.position), 5);
-            //rotation syntax seems to yield wierder movements.
-
-            //****** Bits of code from unsuccessful tries using other functions than rotate towards:
-            //  angle = Vector3.Angle(Gaze.transform.position - Agent.transform.position, Agent.transform.forward);
-
-            //  if (maxSpeed>0)
-            //if (gameObject.transform.forward.normalized != desired.normalized)
-            //  float desired = angle * maxSpeed;
-            // gameObject.transform.Rotate( (Gaze.transform.position - Agent.transform.forward) );
-            //Vector3 desired = gameObject.transform.forward + (Gaze.transform.position - gameObject.transform.forward) / maxSpeed;
-
-
-            //gameObject.transform.forward = desired.normalized;
-
-            // Vector3 desired = ( Gaze.transform.position + gameObject.transform.forward - 2 * gameObject.transform.position) / 2;
-            //gameObject.transform.forward = desired;
-            //  maxSpeed = maxSpeed - 1;
-            //  Vector3 dist = Gaze.transform.position - gameObject.transform.position;
-            //    Vector3 desired = dist.normalized * maxSpeed;
-            //gameObject.transform.forward = desired; // - gameObject.transform.forward; //forward is basically our velocity
-
-            //gameObject.transform.forward = Gaze.transform.position - gameObject.transform.position;
-
-
-            /////STUFF BEFORE
-
-
-            //Clone = Instantiate(gameObject, gameObject.transform.position, Quaternion.Euler(0, angle, 0) );
-            // GameObject.Find(name).transform.rotation = Quaternion.Euler(Gaze.transform.position);
-            //Debug.Log(angle);
-            //gameObject.transform.localScale = Gaze.transform.position;
-            // Clone.transform.position = gameObject.transform.position;
-            //   Clone.transform.forward = Gaze.transform.position - Clone.transform.position;
-            //localrotation - relativ4e to the parent's rotation  
-
-            //  Debug.DrawLine(Agent.transform.position, Gaze.transform.position, Color.red,1000, true); 
-        }
-        else {
-
-
-            if ( (gameObject.transform.forward.normalized != gameObject.transform.parent.transform.forward.normalized) && (randomVar > 0) )
-            {
-                float k = 0.007f;
-                 gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, gameObject.transform.parent.transform.forward + new Vector3(Random.Range(-k,k), Random.Range(-k, k), Random.Range(-k, k) ), stepRadians, 0 );
-                randomVar--;
-              //  if (randomVar == 0)
-                    
-                // target = (GameObject) gameObject.transform.parent;
-                //    target.transform.Rotation = Random.Range(-20, 20));
-                //wait another randomvariable * time.deltaTime;
-                //randomvariable -- 
-            }
-            else
-            {
-                gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, gameObject.transform.parent.transform.forward, stepRadians, 0);
-                randomVar = 10 ;
-            }
-            // gameObject.transform.rotation = Quaternion.RotateTowards(gameObject.transform.rotation, Quaternion.LookRotation(gameObject.transform.parent.transform.forward), 5);
-            //Rotation code too ^
-
-
-            //****** Unsuccessful tries using other functions than rotate towards:
-            //gameObject.transform.forward = gameObject.transform.parent.transform.forward; //chest forward
-            //  gameObject.transform.forward = gameObject.transform.forward.normalized;
-            //maxSpeed = defaultSpd;
-
-            StartCoroutine(States(gameObject)); //determine state of the agent
-
-
-        }
+        StartCoroutine(States(gameObject)); //determine state of the agent and take appropriate actions
     }
 
     IEnumerator States (GameObject Agent)
     {
-        SetState(_state);
+       // SetState(_state);
 
         while (true)
         {
             switch (_state)
             {
                 case State.Stroll:
-                    gazeAround(Agent);
+                    lookFwd(Agent); //normal behaviour
 
-                    prev_visible = visible;
-                    visible = scanFrontalArea (Agent)  - do it as int function 
-                    // if (visible > old_visible) 
-                    //{
-                      //  _prev_state = _state;
-                        //       _state = State.Decision; }
+                    if ( scanIncrease(Agent) ) SetState(State.Decide); //if more gazers around, redecide whether to follow gaze or not
 
-                        //if blabla { _prev_state= _state;
-                        //       _state = State.praaa;
-                        //}
+                    break;
 
-                        break; 
+                case State.Decide:
+
+                    lookFwd(Agent); //normal behaviour
+
+                    if ( decideFollow(Agent) ) SetState(State.Follow);
+                    else SetState(State.Stroll);
+
+                    break;
+
+                case State.Follow:
+
+                    gazeFollow(Agent); //gazing behaviour
+
+                    if (!maintainFollow(Agent) ) SetState(State.Stroll);
+
+                    break;
                
             }
             yield return null;
@@ -188,18 +107,66 @@ public class GazeFollowing : MonoBehaviour {
 
     }
 
-    void gazeAround(GameObject Agent)
+    bool scanIncrease(GameObject Agent)
+    {
+        prev_visible = visible; //prev number of visible gazers
+        visible = scanFrontalArea(Agent);//  scan for visible gazers
+
+        if (visible > prev_visible) //if more gazers around
+            return true;
+        else return false;  
+    }
+
+    bool decideFollow(GameObject Agent)
+    { 
+        visible = scanFrontalArea(Agent);
+
+        //formula to determine whether to follow or not 
+        //right now - placeholder to 2 gazers (player and static agent)
+
+        if (visible >= 2) return true;
+        else return false;
+    }
+
+    void lookFwd(GameObject Agent)
     {
         Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);
+        //moving gaze forward
+    }
+
+    void gazeFollow(GameObject Agent)
+    {
+        Vector3 desired = Gaze.transform.position - Agent.transform.position;
+
+        if (Vector3.Angle(Agent.transform.forward, desired) < 80) // check if within visual field)
+        {
+            if (Vector3.Angle(Agent.transform.parent.transform.forward, desired) <= 135)
+                //(physically harder to look back over 135 degrees
+               Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, desired, stepRadians, 0);
+            //rotate towards target
+            //steering behaviour -> normalized by stepRadians
+
+            else Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);
+            //if not within physically comfortable angle, rotate back towards run direction
+        }
+
+    }
+
+    bool maintainFollow(GameObject Agent)
+    {
+        if (maintain == -7) {  maintain = 5 / Time.deltaTime; return true; } //we want follow to be maintained for 5 seconds 
+        else if (maintain>0) {  maintain--; return true; } //counting down
+        else {  maintain = -7; return false; } //default unmaintain value
+
     }
 
     int scanFrontalArea(GameObject Agent)
     {
         int counter = 0;
-        foreach (GameObject Gazing in GameObject.FindGameObjectsWithTag("Gazing") )
+        foreach (GameObject Gazing in GameObject.FindGameObjectsWithTag("Gazing") ) //scanning for gazers
             {
-            if (Vector3.Distance(Agent.transform.position, Gazing.transform.position) <= transferThreshold)
-                if (Vector3.Angle (Agent.transform.forward, Gazing.transform.position) <= 80 ) //within visual area
+            if (Vector3.Distance(Agent.transform.position, Gazing.transform.position) <= transferThreshold) //if any gazer within range
+                if (Vector3.Angle (Agent.transform.forward, Gazing.transform.position - Agent.transform.position) <= 80 ) //within visual area
                   counter++;
             }
 
