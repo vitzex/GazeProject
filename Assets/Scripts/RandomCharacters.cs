@@ -30,7 +30,7 @@ public class RandomCharacters : MonoBehaviour {
 	{
 		if(avatar)
 		{
-            int rand = UnityEngine.Random.Range(0, 50);
+          //  int rand = UnityEngine.Random.Range(0, 50);
 
           //  avatar.SetBool("Jump", rand == 20); //no more gimmicks
           //  avatar.SetBool("Dive", rand == 30);
@@ -44,15 +44,23 @@ public class RandomCharacters : MonoBehaviour {
 
                 Vector3 curentDir = avatar.rootRotation * Vector3.forward;
 				Vector3 wantedDir = (TargetPosition - avatar.rootPosition).normalized;
-	
-				if(Vector3.Dot(curentDir,wantedDir) > 0)
+
+                //dot prod = length of the projection of curentDir onto desiredDir multiplied by the length of desiredDir  (or vice versa)
+                // => dot prod < 0 means different "orientations" i.e. angle >90 degrees (cos negative) (going "different ways")
+
+                if (Vector3.Dot(curentDir,wantedDir) > 0)
 				{
-					avatar.SetFloat("Direction",Vector3.Cross(curentDir,wantedDir).y,DirectionDampTime, Time.deltaTime);
-				}
-				else
+                    //avatar.SetFloat("Direction", wantedDir.y, DirectionDampTime, Time.deltaTime); //checking
+                    avatar.SetFloat("Direction",Vector3.Cross(curentDir,wantedDir).y,DirectionDampTime, Time.deltaTime);
+                    //go towards cross product .y = curentDir.z*wantedDir.x - curentDir.x*wantedDir.z ;
+                }
+                else
 				{
-            		avatar.SetFloat("Direction", Vector3.Cross(curentDir,wantedDir).y > 0 ? 1 : -1, DirectionDampTime, Time.deltaTime);
-				}
+                    //avatar.SetFloat("Direction", wantedDir.y, DirectionDampTime, Time.deltaTime); //checking
+                    avatar.SetFloat("Direction", Vector3.Cross(curentDir,wantedDir).y > 0 ? 1 : -1, DirectionDampTime, Time.deltaTime);
+                    //direction = sign of Cross product [ if dot product < 0]
+                    //thus turn around when going "opposite" ways (angle > 90 degrees) ?
+                }
 			}
 			else
 			{

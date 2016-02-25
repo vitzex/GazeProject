@@ -2,17 +2,41 @@
 using System.Collections;
 
 public class GazeFollowing : MonoBehaviour {
+    public enum State { Stroll, Decide, Follow }
+
+    State _state = State.Stroll;
+    State _prevState;
+
+    #region Basic Getters/Setters
+    public State CurrentState
+    {
+        get { return _state; }
+    }
+
+    public State PrevState
+    {
+        get { return _prevState; }
+    }
+    #endregion
+
+    public void SetState(State newState)
+    {
+        _prevState = _state;
+        _state = newState;
+        Debug.Log(_state);
+    }
 
     public bool overwrite;
-    GameObject Gaze, Agent, Clone, threshold;
-    float angle, transferThreshold, stepRadians;
+    GameObject Gaze, Agent, Clone, threshold, target;
+    float angle, transferThreshold, stepRadians, randomVar = 10;
+    int visible = 0, prev_visible=0;
 
     // Use this for initialization
     void Start () {
 
         Agent = gameObject; //the object being called
 
-        stepRadians = 11* Mathf.PI / 180;
+        stepRadians = 7* Mathf.PI / 180;
 
      //   defaultSpd=500;
      //   maxSpeed = defaultSpd;
@@ -28,9 +52,7 @@ public class GazeFollowing : MonoBehaviour {
     //triggered everytime a creature spawns => move to permanent script
 
 
-        //can rotate -80 to 80 sideways (y rotation
-        // can rotate 0 to 80 up-down (x, z rotation) so that others can stare up too (not be blocked)
-        //only works when joint_head copied outside of neck -> parent now torso
+      
 
         transferThreshold = 7;
 
@@ -38,8 +60,6 @@ public class GazeFollowing : MonoBehaviour {
         threshold.GetComponent<Collider>().enabled = false;
         threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0,Gaze.transform.parent.transform.position.y, 0);
         threshold.transform.localScale = new Vector3(2*transferThreshold, 0.1f, 2*transferThreshold);
-
-        
 
         //  Clone = (GameObject) Instantiate(gameObject, gameObject.transform.position, Quaternion.Euler(0, angle, 0));
     }
@@ -103,17 +123,87 @@ public class GazeFollowing : MonoBehaviour {
 
             //  Debug.DrawLine(Agent.transform.position, Gaze.transform.position, Color.red,1000, true); 
         }
-        else { 
-            gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, gameObject.transform.parent.transform.forward, stepRadians, 0);
+        else {
+
+
+            if ( (gameObject.transform.forward.normalized != gameObject.transform.parent.transform.forward.normalized) && (randomVar > 0) )
+            {
+                float k = 0.007f;
+                 gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, gameObject.transform.parent.transform.forward + new Vector3(Random.Range(-k,k), Random.Range(-k, k), Random.Range(-k, k) ), stepRadians, 0 );
+                randomVar--;
+              //  if (randomVar == 0)
+                    
+                // target = (GameObject) gameObject.transform.parent;
+                //    target.transform.Rotation = Random.Range(-20, 20));
+                //wait another randomvariable * time.deltaTime;
+                //randomvariable -- 
+            }
+            else
+            {
+                gameObject.transform.forward = Vector3.RotateTowards(gameObject.transform.forward, gameObject.transform.parent.transform.forward, stepRadians, 0);
+                randomVar = 10 ;
+            }
             // gameObject.transform.rotation = Quaternion.RotateTowards(gameObject.transform.rotation, Quaternion.LookRotation(gameObject.transform.parent.transform.forward), 5);
             //Rotation code too ^
 
 
-  //****** Unsuccessful tries using other functions than rotate towards:
+            //****** Unsuccessful tries using other functions than rotate towards:
             //gameObject.transform.forward = gameObject.transform.parent.transform.forward; //chest forward
             //  gameObject.transform.forward = gameObject.transform.forward.normalized;
             //maxSpeed = defaultSpd;
 
+            StartCoroutine(States(gameObject)); //determine state of the agent
+
+
         }
+    }
+
+    IEnumerator States (GameObject Agent)
+    {
+        SetState(_state);
+
+        while (true)
+        {
+            switch (_state)
+            {
+                case State.Stroll:
+                    gazeAround(Agent);
+
+                    prev_visible = visible;
+                    visible = scanFrontalArea (Agent)  - do it as int function 
+                    // if (visible > old_visible) 
+                    //{
+                      //  _prev_state = _state;
+                        //       _state = State.Decision; }
+
+                        //if blabla { _prev_state= _state;
+                        //       _state = State.praaa;
+                        //}
+
+                        break; 
+               
+            }
+            yield return null;
+        }
+
+    }
+
+    void gazeAround(GameObject Agent)
+    {
+        Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);
+    }
+
+    int scanFrontalArea(GameObject Agent)
+    {
+        int counter = 0;
+        foreach (GameObject Gazing in GameObject.FindGameObjectsWithTag("Gazing") )
+            {
+            if (Vector3.Distance(Agent.transform.position, Gazing.transform.position) <= transferThreshold)
+                if (Vector3.Angle (Agent.transform.forward, Gazing.transform.position) <= 80 ) //within visual area
+                  counter++;
+            }
+
+        return counter; 
+        //returns amount of gazing agents in one's visual area
     }
 }
