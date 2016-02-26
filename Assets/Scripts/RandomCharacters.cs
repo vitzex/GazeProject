@@ -15,16 +15,19 @@ public class RandomCharacters : MonoBehaviour {
 	public float AvatarRange = 1;
 
 	protected Animator avatar;
-	
+    float randomized; 
+
 	private float SpeedDampTime = 1.2f;	//increasing global damp time will make agents stagnate more
 	private float DirectionDampTime = 2;	
-	private Vector3 TargetPosition = new Vector3(0,0,0);
+	private Vector3 TargetPosition = new Vector3(3,7,22);
 	
 	// Use this for initialization
 	void Start () 
 	{
 		avatar = GetComponent<Animator>();
-	}
+        randomized = UnityEngine.Random.Range(0.2f, 0.7f);
+        TargetPosition = TargetPosition + new Vector3 (UnityEngine.Random.Range(-7,7),0,0) ;
+    }
     
 	void Update () 
 	{
@@ -35,11 +38,11 @@ public class RandomCharacters : MonoBehaviour {
           //  avatar.SetBool("Jump", rand == 20); //no more gimmicks
           //  avatar.SetBool("Dive", rand == 30);
 			
-			if(Vector3.Distance(TargetPosition,avatar.rootPosition) > 5)
+			if(Vector3.Distance(TargetPosition,avatar.rootPosition) > 7.7)
 			{
 				avatar.SetFloat("Speed",0.3f,3.5f*SpeedDampTime, Time.deltaTime);
 
-                avatar.speed = 0.5f;
+                avatar.speed = randomized;
                 //speed fix
 
                 Vector3 curentDir = avatar.rootRotation * Vector3.forward;
@@ -65,10 +68,14 @@ public class RandomCharacters : MonoBehaviour {
 			else
 			{
                 avatar.SetFloat("Speed", 0, SpeedDampTime, Time.deltaTime);
-				
-				if(avatar.GetFloat("Speed") < 0.01f)
+                gameObject.transform.position = new Vector3(-9, 0, -18) + new Vector3(UnityEngine.Random.Range(0, 7), 0, UnityEngine.Random.Range(0, 7)) ;
+                gameObject.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(-80, 80), 0) ;
+                //Spawner.count--;
+
+                if (avatar.GetFloat("Speed") < 0.01f)
 				{
-					TargetPosition = new Vector3(UnityEngine.Random.Range(-AvatarRange,AvatarRange),0,UnityEngine.Random.Range(-AvatarRange,AvatarRange));
+                    Destroy(gameObject);
+					//TargetPosition = new Vector3(UnityEngine.Random.Range(-AvatarRange,AvatarRange),0,UnityEngine.Random.Range(-AvatarRange,AvatarRange));
 				}
 			}
 		}		

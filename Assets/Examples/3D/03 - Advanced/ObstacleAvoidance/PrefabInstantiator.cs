@@ -6,7 +6,7 @@ public class PrefabInstantiator : MonoBehaviour {
 	GameObject _prefab;
 
 	[SerializeField]
-	int _amount = 100;
+	int _amount = 1000;
 
 
 	// Use this for initialization

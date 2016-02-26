@@ -5,8 +5,9 @@ public class GazeFollowing : MonoBehaviour {
 
     public bool overwrite;
     GameObject Gaze, Agent, Clone, threshold, target;
-    float angle, transferThreshold, stepRadians = 0.1f * Mathf.PI / 180, randomVar = 10, maintain = -7;
+    float angle, transferThreshold, randomVar = 10, maintain = -7;
     int visible = 0, prev_visible = 0;
+    public float stepRadians = 0.1f * Mathf.PI / 180;
 
     public enum State { Stroll, Decide, Follow, Invisible }
 
@@ -152,7 +153,7 @@ public class GazeFollowing : MonoBehaviour {
         //moving gaze forward
     }
 
-    void gazeFollow(GameObject Agent)
+    public void gazeFollow(GameObject Agent)
     {
         Vector3 desired = Gaze.transform.position - Agent.transform.position;
 
