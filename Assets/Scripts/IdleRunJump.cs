@@ -8,7 +8,8 @@ public class IdleRunJump : MonoBehaviour {
     public GameObject threshold, Gaze, headtest;
 	public float DirectionDampTime = .25f;
 	public bool ApplyGravity = true;
-    int transferThreshold = 7, gazeCounter=50;
+    int transferThreshold = 7, gazeCounter = 50;
+    public int counter;
 
    // public int gazersInSight(GameObject Agent)
    // {
@@ -42,9 +43,26 @@ public class IdleRunJump : MonoBehaviour {
         //only works when joint_head copied outside of neck -> parent now torso
     }
 
+    void OnGUI()
+    {
+        counter = 0;
+
+         foreach (UnityEngine.GameObject x in UnityEngine.GameObject.FindGameObjectsWithTag("Gazing") )
+        //foreach (UnityEngine.GameObject x in UnityEngine.Object.FindObjectsOfType<GameObject>())
+            counter = counter++;
+
+        GUILayout.Label("");
+        GUILayout.Label("");
+        GUILayout.Label(counter + " gazing");
+
+    }
+
     // Update is called once per frame
     void Update () 
 	{
+
+
+
 
         if (gazeCounter == 0)
         {
