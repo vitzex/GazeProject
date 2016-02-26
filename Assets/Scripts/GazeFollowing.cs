@@ -142,6 +142,7 @@ public class GazeFollowing : MonoBehaviour
                     lookFwd(Agent); //normal behaviour
                     if (Agent.tag != "Agent") Agent.tag = "Agent";
 
+                    maintain = -7; //restarting, in case gazefollow maintain bhv still ongoing but out of range
                     if (!maintainBhv(Agent)) SetState(State.Stroll);
 
                     break;

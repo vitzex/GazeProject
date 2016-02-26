@@ -33,7 +33,7 @@ public class Spawner: MonoBehaviour {
     {
        
 
-        if (count < 70)
+        if (count < 40)
         {
             bool alt = Input.GetButton("Fire1");
 
