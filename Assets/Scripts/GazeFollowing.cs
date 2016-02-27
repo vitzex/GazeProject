@@ -94,7 +94,17 @@ public class GazeFollowing : MonoBehaviour
                 case State.Invisible:
                     //Agent.transform.forward = Agent.transform.parent.transform.forward; 
                     //no need, no one can see :)
-                    if (Agent.tag != "Agent") Agent.tag = "Agent";
+                    if (Agent.tag != "Agent")
+                    {
+                        Agent.tag = "Agent";
+                    }
+
+                    if ((_prevState == State.Follow) || (_prevState == State.Decide))  //making sure it's turned off (and only checking once)
+                        foreach (Transform child in Agent.transform)
+                        {
+                            child.gameObject.SetActive(false);
+                            SetState(_state); //regoes into state, but de-stores the previous if State.follow / decide
+                        }
 
                     if (Agent.transform.parent.transform.parent.transform.parent.GetComponentInChildren<Renderer>().isVisible) //only for visible agents
                         SetState(State.Stroll);
@@ -105,7 +115,17 @@ public class GazeFollowing : MonoBehaviour
                         SetState(State.Invisible);
 
                     lookFwd(Agent); //normal behaviour
-                    if (Agent.tag != "Agent") Agent.tag = "Agent";
+                    if (Agent.tag != "Agent")
+                    {
+                        Agent.tag = "Agent";
+                    }
+
+                    if ( (_prevState == State.Follow) || (_prevState == State.Decide) )  //making sure it's turned off (and only checking once)
+                        foreach (Transform child in Agent.transform)
+                        {
+                            child.gameObject.SetActive(false);
+                            SetState(_state); //regoes into state, but de-stores the previous if State.follow / decide
+                        }
 
                     if (scanIncrease(Agent)) SetState(State.Decide); //if more gazers around, redecide whether to follow gaze or not
 
@@ -116,8 +136,16 @@ public class GazeFollowing : MonoBehaviour
                     if (!Agent.transform.parent.transform.parent.transform.parent.GetComponentInChildren<Renderer>().isVisible) //not visible agents
                         SetState(State.Invisible);
 
+                    foreach (Transform child in Agent.transform) //show when "scanning"
+                    {
+                        child.gameObject.SetActive(true);
+                    } 
+
                     lookFwd(Agent); //normal behaviour
-                    if (Agent.tag != "Agent") Agent.tag = "Agent";
+                    if (Agent.tag != "Agent")
+                    {
+                        Agent.tag = "Agent";
+                    }
 
                     if (decideFollow(Agent)) SetState(State.Follow);
                     else SetState(State.Stroll);
@@ -130,8 +158,14 @@ public class GazeFollowing : MonoBehaviour
                         SetState(State.Invisible);
 
                     if (Agent.tag != "Gazing") Agent.tag = "Gazing";
-                    gazeFollow(Agent); //gazing behaviour
-
+                    {
+                        gazeFollow(Agent); //gazing behaviour
+                        
+                        foreach (Transform child in Agent.transform)
+                        {
+                            child.gameObject.SetActive(true);
+                        } 
+                    }
 
                     if (!maintainBhv(Agent)) { Debug.Log("Immune"); SetState(State.Immune); }
 
@@ -141,7 +175,15 @@ public class GazeFollowing : MonoBehaviour
                         SetState(State.Invisible);
 
                     lookFwd(Agent); //normal behaviour
-                    if (Agent.tag != "Agent") Agent.tag = "Agent";
+                    if (Agent.tag != "Agent")
+                    {
+                        Agent.tag = "Agent";
+
+                        foreach (Transform child in Agent.transform)
+                        {
+                            child.gameObject.SetActive(false);
+                        }
+                    }
 
                     maintain = -7; //restarting, in case gazefollow maintain bhv still ongoing but out of range
                     if (!maintainBhv(Agent))
