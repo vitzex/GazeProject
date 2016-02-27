@@ -28,14 +28,12 @@ public class IdleRunJump : MonoBehaviour {
 
         Gaze = GameObject.FindGameObjectWithTag("Gaze");
 
-        headtest = GameObject.Find("HeadTest");
+        // transferThreshold = 7;
 
-       // transferThreshold = 7;
-
-//threshold = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-  //      threshold.GetComponent<Collider>().enabled = false;
-    //    threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0);
-      //  threshold.transform.localScale = new Vector3(2 * transferThreshold, 0.1f, 2 * transferThreshold);
+        //threshold = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //      threshold.GetComponent<Collider>().enabled = false;
+        //    threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0);
+        //  threshold.transform.localScale = new Vector3(2 * transferThreshold, 0.1f, 2 * transferThreshold);
 
         // Quaternion rot = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
         Gaze.transform.parent.transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
@@ -80,9 +78,10 @@ public class IdleRunJump : MonoBehaviour {
         }//updating gaze from time to time
       //  Debug.Log(gazeCounter);
 
+        foreach (GameObject headtest in GameObject.FindGameObjectsWithTag("Test"))
         headtest.transform.forward = Vector3.RotateTowards(headtest.transform.forward, Gaze.transform.position - headtest.transform.position, 0.02f, 0);
 
-        threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0);
+      //  threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0);
         //threshold area outlined - in case gaze.parent moves
 
         //   foreach (GameObject Agent in GameObject.FindGameObjectsWithTag("Agent")) //scanning for gazers
