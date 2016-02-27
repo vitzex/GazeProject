@@ -8,17 +8,18 @@ public class IdleRunJump : MonoBehaviour {
     public GameObject threshold, Gaze, headtest;
 	public float DirectionDampTime = .25f;
 	public bool ApplyGravity = true;
-    int transferThreshold = 7, gazeCounter = 50;
+   int gazeCounter = 50;
     public int counter;
+    public int transferThreshold = 7;
 
    // public int gazersInSight(GameObject Agent)
    // {
-    //    if 
-//
-  //  }
+   //    if 
+   //
+   //  }
 
-	// Use this for initialization
-	void Start () 
+    // Use this for initialization
+    void Start () 
 	{
 		animator = GetComponent<Animator>();
 		
@@ -29,12 +30,12 @@ public class IdleRunJump : MonoBehaviour {
 
         headtest = GameObject.Find("HeadTest");
 
-        transferThreshold = 7;
+       // transferThreshold = 7;
 
-        threshold = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        threshold.GetComponent<Collider>().enabled = false;
-        threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0);
-        threshold.transform.localScale = new Vector3(2 * transferThreshold, 0.1f, 2 * transferThreshold);
+//threshold = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+  //      threshold.GetComponent<Collider>().enabled = false;
+    //    threshold.transform.position = Gaze.transform.parent.transform.position - new Vector3(0, Gaze.transform.parent.transform.position.y, 0);
+      //  threshold.transform.localScale = new Vector3(2 * transferThreshold, 0.1f, 2 * transferThreshold);
 
         // Quaternion rot = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
         Gaze.transform.parent.transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
@@ -47,9 +48,9 @@ public class IdleRunJump : MonoBehaviour {
     {
         counter = 0;
 
-         foreach (UnityEngine.GameObject x in UnityEngine.GameObject.FindGameObjectsWithTag("Gazing") )
+    //     foreach (UnityEngine.GameObject x in UnityEngine.GameObject.FindGameObjectsWithTag("Gazing") )
         //foreach (UnityEngine.GameObject x in UnityEngine.Object.FindObjectsOfType<GameObject>())
-            counter = counter++;
+         //   counter = counter++;
 
         GUILayout.Label("");
         GUILayout.Label("");

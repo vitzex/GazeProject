@@ -5,8 +5,9 @@ public class GazeFollowing : MonoBehaviour
 {
 
     public bool overwrite;
-    GameObject Gaze, Agent, Clone, threshold, target;
-    float angle, randomVar = 10, maintain = -7;
+    GameObject Gaze, Clone, threshold, target;
+   // GameObject Agent;
+    float angle, maintain = -7;
     int visible = 0, prev_visible = 0;
     public float stepRadians = 0.1f * Mathf.PI / 180;
     // int counter;
@@ -46,7 +47,7 @@ public class GazeFollowing : MonoBehaviour
 
         SetState(State.Stroll);
 
-        Agent = gameObject; //the object being called
+       // Agent = gameObject; //the object being called
 
         //    stepRadians = 0.1f* Mathf.PI / 180; //defined upstairs
 
@@ -132,7 +133,7 @@ public class GazeFollowing : MonoBehaviour
                     gazeFollow(Agent); //gazing behaviour
 
 
-                    if (!maintainBhv(Agent)) SetState(State.Immune);
+                    if (!maintainBhv(Agent)) { Debug.Log("Immune"); SetState(State.Immune); }
 
                     break;
                 case State.Immune:
@@ -143,7 +144,10 @@ public class GazeFollowing : MonoBehaviour
                     if (Agent.tag != "Agent") Agent.tag = "Agent";
 
                     maintain = -7; //restarting, in case gazefollow maintain bhv still ongoing but out of range
-                    if (!maintainBhv(Agent)) SetState(State.Stroll);
+                    if (!maintainBhv(Agent))
+                    {
+                        Debug.Log("Not Immune"); SetState(State.Stroll);
+                    }
 
                     break;
 
@@ -198,8 +202,11 @@ public class GazeFollowing : MonoBehaviour
         //OBSOLETE - now visual field is being calculated via FSM
         //   {
         if (Vector3.Angle(Agent.transform.parent.transform.forward, desired) <= 135)
-            //physically harder to look back over 135 degrees - so if going over, look away
+        //physically harder to look back over 135 degrees - so if going over, look away
+        {
             Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, desired, stepRadians, 0);
+
+        }
         //rotate towards target
         //steering behaviour -> normalized by stepRadians
         else Agent.transform.forward = Vector3.RotateTowards(Agent.transform.forward, Agent.transform.parent.transform.forward, stepRadians, 0);

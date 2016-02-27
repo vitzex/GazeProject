@@ -8,7 +8,7 @@ public class Spawner: MonoBehaviour {
    public int count = 0;
      float lastTime = 0;
     public int showCount = 0;
-    int counter = 0;
+   // int counter = 0;
 
 
 	void OnGUI()
@@ -33,7 +33,7 @@ public class Spawner: MonoBehaviour {
     {
        
 
-        if (count < 40)
+        if (count < 100)
         {
             bool alt = Input.GetButton("Fire1");
 

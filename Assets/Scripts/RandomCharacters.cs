@@ -20,11 +20,11 @@ public class RandomCharacters : MonoBehaviour
 
     private float SpeedDampTime = 1.2f; //increasing global damp time will make agents stagnate more
     private float DirectionDampTime = 2;
-    private Vector3 TargetPosition = new Vector3(3, 7, 22), prevTarget;
+    private Vector3 TargetPosition = new Vector3(3, 0, 17), prevTarget, TargetPos;
 
     public enum State { upwards, downwards };
 
-    bool check = false; //checking for state swithc
+   // bool check = false; //checking for state swithc
     State _state = State.upwards;
     State _prevState;
 
@@ -53,7 +53,7 @@ public class RandomCharacters : MonoBehaviour
     {
         avatar = GetComponent<Animator>();
         randomized = UnityEngine.Random.Range(0.2f, 0.7f);
-        TargetPosition = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
+        TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
     }
 
     void Update()
@@ -65,7 +65,7 @@ public class RandomCharacters : MonoBehaviour
             //  avatar.SetBool("Jump", rand == 20); //no more gimmicks
             //  avatar.SetBool("Dive", rand == 30);
 
-            if (Vector3.Distance(TargetPosition, avatar.rootPosition) > 7.7)
+            if (Vector3.Distance(TargetPos, avatar.rootPosition) > 1)
             {
                 avatar.SetFloat("Speed", 0.3f, 3.5f * SpeedDampTime, Time.deltaTime);
 
@@ -73,7 +73,7 @@ public class RandomCharacters : MonoBehaviour
                 //speed fix
 
                 Vector3 curentDir = avatar.rootRotation * Vector3.forward;
-                Vector3 wantedDir = (TargetPosition - avatar.rootPosition).normalized;
+                Vector3 wantedDir = (TargetPos - avatar.rootPosition).normalized;
 
                 //dot prod = length of the projection of curentDir onto desiredDir multiplied by the length of desiredDir  (or vice versa)
                 // => dot prod < 0 means different "orientations" i.e. angle >90 degrees (cos negative) (going "different ways")
@@ -94,16 +94,30 @@ public class RandomCharacters : MonoBehaviour
             }
             else
             {
-                check = true;
+                //  check = true;
                 // StartCoroutine(DirectionState(avatar));
 
-                prevTarget = new Vector3(-9, 0, -18);
+                if (TargetPosition == new Vector3(3, 0, 17))
+
+                {
+                    prevTarget = TargetPosition;
+                    TargetPosition = new Vector3(-9, 0, -18);
+                   
+                }
+                else
+
+                {
+                    prevTarget = TargetPosition;
+                    TargetPosition = new Vector3(3, 0, 17);
+
+                }
+
+                TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
 
                 avatar.SetFloat("Speed", 0, SpeedDampTime, Time.deltaTime);
-                gameObject.transform.position = prevTarget + new Vector3(UnityEngine.Random.Range(0, 7), 0, UnityEngine.Random.Range(0, 7));
-                gameObject.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(-80, 80), 0);
+               // gameObject.transform.position = prevTarget + new Vector3(UnityEngine.Random.Range(0, 7), 0, UnityEngine.Random.Range(0, 7));
+                gameObject.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(-40, 40), 0);
 
-                
                 //Spawner.count--;
 
                 if (avatar.GetFloat("Speed") < 0.01f)
