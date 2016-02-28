@@ -150,7 +150,7 @@ public class RandomCharacters : MonoBehaviour
                     
                     TargetPosition = new Vector3(3, 0, 17);
                     TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
-                    gameObject.tag = "upwards";
+                  //  gameObject.tag = "upwards";
 
                    // Debug.Log("upwards");
 
@@ -168,7 +168,7 @@ public class RandomCharacters : MonoBehaviour
 
                     TargetPosition = new Vector3(-9, 0, -18);
                     TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
-                    gameObject.tag = "downwards";
+                   // gameObject.tag = "downwards";
 
                  //   Debug.Log("downwards");
 

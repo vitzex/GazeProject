@@ -217,6 +217,8 @@ public class GazeFollowing : MonoBehaviour
         //formula to determine whether to follow or not 
         //right now - placeholder to 2 gazers (player and static agent)
 
+        if (scanFrontalArea(Agent).y > 0) Debug.Log("haoleu");
+
         //if (visible >= 2) return true;
         if (Random.Range(0f, 1f) < (0.6f + 0.4f*scanFrontalArea(Agent).z/visible ) * m * Mathf.Pow(visible, k) / (Mathf.Pow(visible, k) + Mathf.Pow(t, k))) return true;
         else return false;
@@ -288,26 +290,43 @@ public class GazeFollowing : MonoBehaviour
 
     Vector3 scanFrontalArea(GameObject Agent)
     {
-        int counter = 0, incoming=0, sameDir=0, upcount=0;
+        int counter = 0, incoming = 0, sameDir = 0; // upcount = 0;
         foreach (GameObject Gazing in GameObject.FindGameObjectsWithTag("Gazing")) //scanning for gazers
         {
             if (Vector3.Distance(Agent.transform.position, Gazing.transform.position) <= transferThreshold) //if any gazer within range
                 if (Vector3.Angle(Agent.transform.forward, Gazing.transform.position - Agent.transform.position) <= 80) //within visual area
                     counter++;
-            if (Gazing.transform.parent.transform.parent.transform.parent.tag == "upwards")
-                upcount++;
+
+            if (Gazing.GetComponentInParent<RandomCharacters>() == null)
+            {
+                if (Agent.GetComponentInParent<RandomCharacters>()._prevState == RandomCharacters.State.downwards)
+                    incoming++; //as stationary gazers are looking upstream, although they don't have a Direction State 
+                //due to RandomCharacters.cs only being for mobile agents
+                else if (Agent.GetComponentInParent<RandomCharacters>()._prevState == RandomCharacters.State.upwards)
+                    sameDir++;
+            }
+            else
+            {
+                if (Gazing.GetComponentInParent<RandomCharacters>()._prevState == Agent.GetComponentInParent<RandomCharacters>()._prevState)
+                    sameDir++;
+                else incoming++;
+            }
+            //if (Gazing.transform.parent.transform.parent.transform.parent.tag == "upwards")
+            //  upcount++;
         }
 
-        if (Agent.transform.parent.transform.parent.transform.parent.tag == "upwards")
-         {  sameDir = upcount;
-            incoming = counter - upcount;//same tag => same direction
-         }
-        else if (Agent.transform.parent.transform.parent.transform.parent.tag == "downwards")
-        {
-            incoming = upcount;
-            sameDir = counter - upcount;
-        }//diff tag => incoming
-       // Debug.Log(incoming);
+        //   if (Agent.transform.parent.transform.parent.transform.parent.tag == "upwards")
+        //   {  sameDir = upcount;
+        //     incoming = counter - upcount;//same tag => same direction
+        //}
+        //  else if (Agent.transform.parent.transform.parent.transform.parent.tag == "downwards")
+        // {
+        //     incoming = upcount;
+        //    sameDir = counter - upcount;
+        // }//diff tag => incoming
+        // Debug.Log(incoming);
+
+        incoming = counter - sameDir; //juust to check
 
         return new Vector3 (counter, incoming, sameDir);
         //returns amount of gazing agents in one's visual area
