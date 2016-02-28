@@ -167,7 +167,8 @@ public class GazeFollowing : MonoBehaviour
                         } 
                     }
 
-                    if (!maintainBhv(Agent)) { Debug.Log("Immune"); SetState(State.Immune); }
+                    if (!maintainBhv(Agent)) { //Debug.Log("Immune"); 
+                        SetState(State.Immune); }
 
                     break;
                 case State.Immune:
@@ -202,7 +203,7 @@ public class GazeFollowing : MonoBehaviour
     bool scanIncrease(GameObject Agent)
     {
         prev_visible = visible; //prev number of visible gazers
-        visible = scanFrontalArea(Agent);//  scan for visible gazers
+        visible = (int)scanFrontalArea(Agent).x;//  scan for visible gazers
 
         if (visible > prev_visible) //if more gazers around
             return true;
@@ -211,15 +212,18 @@ public class GazeFollowing : MonoBehaviour
 
     bool decideFollow(GameObject Agent)
     {
-        visible = scanFrontalArea(Agent);
+        visible = (int) scanFrontalArea(Agent).x;
 
         //formula to determine whether to follow or not 
         //right now - placeholder to 2 gazers (player and static agent)
 
         //if (visible >= 2) return true;
-        if (Random.Range(0f, 1f) < m * Mathf.Pow(visible, k) / (Mathf.Pow(visible, k) + Mathf.Pow(t, k))) return true;
+        if (Random.Range(0f, 1f) < (0.6f + 0.4f*scanFrontalArea(Agent).z/visible ) * m * Mathf.Pow(visible, k) / (Mathf.Pow(visible, k) + Mathf.Pow(t, k))) return true;
         else return false;
         //function in Gallup working TOO WELL
+        //function that tries to mimic findings in Gallup a - scaling via sameDir & incoming balance
+        //ALTHOUGH in large situations it doesn't make that much sense
+        //as same direction gazers increase, the probability of looking is higher
 
         //if (visible > 15)
         //  {
@@ -282,17 +286,30 @@ public class GazeFollowing : MonoBehaviour
 
     }
 
-    int scanFrontalArea(GameObject Agent)
+    Vector3 scanFrontalArea(GameObject Agent)
     {
-        int counter = 0;
+        int counter = 0, incoming=0, sameDir=0, upcount=0;
         foreach (GameObject Gazing in GameObject.FindGameObjectsWithTag("Gazing")) //scanning for gazers
         {
             if (Vector3.Distance(Agent.transform.position, Gazing.transform.position) <= transferThreshold) //if any gazer within range
                 if (Vector3.Angle(Agent.transform.forward, Gazing.transform.position - Agent.transform.position) <= 80) //within visual area
                     counter++;
+            if (Gazing.transform.parent.transform.parent.transform.parent.tag == "upwards")
+                upcount++;
         }
 
-        return counter;
+        if (Agent.transform.parent.transform.parent.transform.parent.tag == "upwards")
+         {  sameDir = upcount;
+            incoming = counter - upcount;//same tag => same direction
+         }
+        else if (Agent.transform.parent.transform.parent.transform.parent.tag == "downwards")
+        {
+            incoming = upcount;
+            sameDir = counter - upcount;
+        }//diff tag => incoming
+       // Debug.Log(incoming);
+
+        return new Vector3 (counter, incoming, sameDir);
         //returns amount of gazing agents in one's visual area
     }
 }

@@ -22,11 +22,11 @@ public class RandomCharacters : MonoBehaviour
     private float DirectionDampTime = 2;
     private Vector3 TargetPosition = new Vector3(3, 0, 17), prevTarget, TargetPos;
 
-    public enum State { upwards, downwards };
+    public enum State { upwards, walk, downwards };
 
-   // bool check = false; //checking for state swithc
+    bool check = false; //checking for state swithc
     State _state = State.upwards;
-    State _prevState;
+   public State _prevState;
 
     #region Basic Getters/Setters
     public State CurrentState
@@ -34,13 +34,13 @@ public class RandomCharacters : MonoBehaviour
         get { return _state; }
     }
 
-    public State PrevState
+    public State PrevDirState
     {
         get { return _prevState; }
     }
     #endregion
 
-    public void SetState(State newState)
+    public void SetDirState(State newState)
     {
         _prevState = _state;
         _state = newState;
@@ -51,6 +51,8 @@ public class RandomCharacters : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        _prevState = State.downwards;
+        SetDirState(State.upwards);
         avatar = GetComponent<Animator>();
         randomized = UnityEngine.Random.Range(0.2f, 0.7f);
         TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
@@ -94,25 +96,28 @@ public class RandomCharacters : MonoBehaviour
             }
             else
             {
-                //  check = true;
-                // StartCoroutine(DirectionState(avatar));
+                check = true;
+                  StartCoroutine(DirectionState(avatar));
+   
 
-                if (TargetPosition == new Vector3(3, 0, 17))
+                // if (_prevState==State.downwards) SetState(State.upwards);
+                // else SetState(State.downwards);
+            //    if (TargetPosition == new Vector3(3, 0, 17))
 
-                {
-                    prevTarget = TargetPosition;
-                    TargetPosition = new Vector3(-9, 0, -18);
+          //      {
+             //       prevTarget = TargetPosition;
+            //        TargetPosition = new Vector3(-9, 0, -18);
                    
-                }
-                else
+             //   }
+           //     else
 
-                {
-                    prevTarget = TargetPosition;
-                    TargetPosition = new Vector3(3, 0, 17);
+             //   {
+              //      prevTarget = TargetPosition;
+              //      TargetPosition = new Vector3(3, 0, 17);
 
-                }
+               // }
 
-                TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
+               // TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
 
                 avatar.SetFloat("Speed", 0, SpeedDampTime, Time.deltaTime);
                // gameObject.transform.position = prevTarget + new Vector3(UnityEngine.Random.Range(0, 7), 0, UnityEngine.Random.Range(0, 7));
@@ -129,44 +134,48 @@ public class RandomCharacters : MonoBehaviour
         }
     }
 
-  //  IEnumerator DirectionState(Animator avatar)
-  //  {
-        // SetState(_state);
+     IEnumerator DirectionState(Animator avatar)
+     {
+    // SetState(_state);
 
-  //      while (true)
-   //     {
-    //        switch (_state)
-     //       {
-     //           case State.upwards:
+          while (true)
+         {
+           switch (_state)
+           {
+              case State.upwards:
                     //Agent.transform.forward = Agent.transform.parent.transform.forward; 
                     //no need, no one can see :
 
-       //             if (check) {
-         //               prevTarget = TargetPosition;
+                    prevTarget = TargetPosition;
+                    
+                    TargetPosition = new Vector3(3, 0, 17);
+                    TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
+                    gameObject.tag = "upwards";
 
-             //           TargetPosition = new Vector3(-9, 0, -18);
-//
-              //          avatar.transform.position = new Vector3(0, 0, 0);
-            ///            check = false; SetState(State.downwards); }
-            //
-            //        break;
-             //   case State.downwards:
+                   // Debug.Log("upwards");
 
+                    SetDirState(State.walk);
+          break;
 
-               //     if (check)
-               //     {
-                  //      prevTarget = TargetPosition;
+        case State.walk:
+     if ( (check==true)&&(_prevState==State.downwards) ) {check = false; SetDirState(State.upwards); yield break; }
+    if ( (check==true)&&(_prevState==State.upwards) ) {check = false;  SetDirState(State.downwards); yield break; }
+        break;
 
-                   //     TargetPosition = new Vector3(3, 7, 22);
+      case State.downwards:
 
-                  //      avatar.transform.position = new Vector3(0, 0, 0);
-//
-                 //       check = false; SetState(State.upwards);
-                  //  }
+                    prevTarget = TargetPosition;
 
-                  //  break;
-          // }
-     //   }
-   //}
+                    TargetPosition = new Vector3(-9, 0, -18);
+                    TargetPos = TargetPosition + new Vector3(UnityEngine.Random.Range(-7, 7), 0, 0);
+                    gameObject.tag = "downwards";
+
+                 //   Debug.Log("downwards");
+
+                    SetDirState(State.walk);
+      break;
+     }
+      }
+    }
 
 }
