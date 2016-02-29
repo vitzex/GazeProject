@@ -60,8 +60,10 @@ public class Agent : MonoBehaviour {
 			float speed = agent.desiredVelocity.magnitude;
 
 			Vector3 velocity = Quaternion.Inverse(transform.rotation) * agent.desiredVelocity;
+            //equivalent to velocity * Inverse(Inverse(rotation) ) = velocity * rotation = desired velocity - good
 
-			float angle = Mathf.Atan2(velocity.x, velocity.z) * 180.0f / 3.14159f;
+			float angle = Mathf.Atan2(velocity.x, velocity.z) * 180.0f / 3.14159f; 
+            //angle from x-axis to (x,z) point * 180/PI => in degrees
 
 			locomotion.Do(speed, angle);
 		}
