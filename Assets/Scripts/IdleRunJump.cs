@@ -67,6 +67,9 @@ public class IdleRunJump : MonoBehaviour {
         {
           //  GameObject.Find("RotateTowardsMe").transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
             Gaze.transform.parent.transform.localRotation = Quaternion.Euler(Random.Range(0, 80), Random.Range(-80, 80), Random.Range(0, 80));
+
+            GameObject.Find("Stimulus").transform.position = Gaze.transform.forward * Random.Range(1f,3f) + Gaze.transform.position;//new Vector3 (Gaze.transform.position.x, 0, Gaze.transform.position.z);
+            // stimulus location
             gazeCounter = 50;
             //localRotation so it's fine to re-rotate as it will still land close to parent
         }
