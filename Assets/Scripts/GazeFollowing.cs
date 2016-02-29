@@ -98,11 +98,13 @@ public class GazeFollowing : MonoBehaviour
                     {
                         Agent.tag = "Agent";
                     }
-
+                     
                     if ((_prevState == State.Follow) || (_prevState == State.Decide))  //making sure it's turned off (and only checking once)
                         foreach (Transform child in Agent.transform)
                         {
                             child.gameObject.SetActive(false);
+
+                          //  Debug.Log("Invisible");
                             SetState(_state); //regoes into state, but de-stores the previous if State.follow / decide
                         }
 
@@ -217,7 +219,7 @@ public class GazeFollowing : MonoBehaviour
         //formula to determine whether to follow or not 
         //right now - placeholder to 2 gazers (player and static agent)
 
-        if (scanFrontalArea(Agent).y > 0) Debug.Log("haoleu");
+      //  if (scanFrontalArea(Agent).y > 0) Debug.Log("haoleu");
 
         //if (visible >= 2) return true;
         if (Random.Range(0f, 1f) < (0.6f + 0.4f*scanFrontalArea(Agent).z/visible ) * m * Mathf.Pow(visible, k) / (Mathf.Pow(visible, k) + Mathf.Pow(t, k))) return true;
